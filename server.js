@@ -14,6 +14,9 @@ const reportes = require('./lib/pdf');
 const demo = require('./lib/demo');
 const crm = require('./lib/crm');
 const excel = require('./lib/excel');
+const supabase = require('./lib/supabase');
+const ventas = require('./lib/ventas');
+const pagos = require('./lib/pagos');
 
 const app = express();
 const PUERTO = process.env.PORT || 3000;
@@ -208,6 +211,55 @@ app.get('/api/reportes', (solicitud, respuesta) => {
   respuesta.json(reportes.listar());
 });
 
+app.get('/api/memoria', async (solicitud, respuesta) => {
+  respuesta.json(await supabase.obtener(20));
+});
+
+app.get('/api/dashboard', (solicitud, respuesta) => {
+  const eventos = crm.ultimos(5000);
+  const clientesPorDia = new Map();
+
+  for (const evento of eventos) {
+    if (evento.rol !== 'user') continue;
+    const fecha = String(evento.fecha).slice(0, 10);
+    if (!clientesPorDia.has(fecha)) clientesPorDia.set(fecha, new Set());
+    clientesPorDia.get(fecha).add(evento.cliente);
+  }
+
+  const dias = ventas.porDia(7).map((dia) => ({
+    ...dia,
+    clientesChat: clientesPorDia.get(dia.fecha)?.size || 0
+  }));
+
+  respuesta.json({
+    resumen: ventas.resumen(),
+    dias,
+    inventario: inventario.leer(),
+    ultimasVentas: ventas.ultimas(10),
+    supabase: supabase.disponible()
+  });
+});
+
+app.get('/api/ventas', (solicitud, respuesta) => {
+  respuesta.json(ventas.ultimas(20));
+});
+
+app.post(
+  '/api/ventas',
+  asincrono(async (solicitud, respuesta) => {
+    const { cliente, items, total, metodo } = solicitud.body || {};
+    respuesta.json(ventas.registrar({ cliente, items, total, metodo }));
+  })
+);
+
+app.post(
+  '/api/pagos/crear',
+  asincrono(async (solicitud, respuesta) => {
+    const { monto, descripcion } = solicitud.body || {};
+    respuesta.json(await pagos.crearSesion({ monto, descripcion }));
+  })
+);
+
 app.get('/api/crm/resumen', (solicitud, respuesta) => {
   respuesta.json(crm.resumen());
 });
@@ -276,6 +328,20 @@ app.post(
 
     await crm.registrar({ cliente: clienteId, rol: 'user', texto });
     await crm.registrar({ cliente: clienteId, rol: 'bot', texto: respuestaTexto });
+
+    supabase.registrar({
+      cliente: clienteId,
+      rol: 'user',
+      texto,
+      tema: texto,
+      respondida: contesta
+    });
+    supabase.registrar({
+      cliente: clienteId,
+      rol: 'bot',
+      texto: respuestaTexto,
+      respondida: contesta
+    });
 
     respuesta.json({ respuesta: respuestaTexto, modo: modoRespuesta, pdf: null });
   })
