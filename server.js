@@ -287,6 +287,10 @@ app.use((error, solicitud, respuesta, siguiente) => {
   respuesta.status(estado).json({ error: mensaje });
 });
 
-app.listen(PUERTO, () => {
-  console.log(`Café Horizonte AI en http://localhost:${PUERTO} (modo ${MODO})`);
-});
+if (process.env.VERCEL !== '1') {
+  app.listen(PUERTO, () => {
+    console.log(`Café Horizonte AI en http://localhost:${PUERTO} (modo ${MODO})`);
+  });
+}
+
+module.exports = app;
