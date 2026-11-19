@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Café Horizonte · Panel de operación</title>
+    <meta
+      name="description"
+      content="Panel en vivo de ventas, inventario y clientes de Café Horizonte."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      .cabecera-acciones {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+      }
+
+      .chip--vivo {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .enlace {
+        color: var(--acc);
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .enlace:hover {
+        color: var(--ink);
+        text-decoration: underline;
+      }
+
+      .enlace:focus-visible {
+        outline: 2px solid var(--acc);
+        outline-offset: 3px;
+      }
+
+      .resumen {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .metrica strong {
+        display: block;
+        font-family: var(--serif);
+        font-size: 32px;
+        font-weight: 400;
+        line-height: 1;
+        color: var(--ink);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .seccion {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .grafico {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+      }
+
+      .eje,
+      .valor,
+      .fecha {
+        font-family: var(--mono);
+        font-size: 9px;
+      }
+
+      .eje {
+        fill: var(--mute);
+      }
+
+      .valor {
+        fill: var(--soft);
+      }
+
+      .fecha {
+        fill: var(--dim);
+      }
+
+      .barra {
+        fill: var(--el);
+      }
+
+      .barra-cero {
+        fill: var(--line);
+      }
+
+      .leyenda {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin: 12px 0 0;
+        font-size: 11px;
+        color: var(--mute);
+      }
+
+      .leyenda span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .leyenda i {
+        width: 11px;
+        height: 11px;
+        border-radius: 2px;
+        background: var(--el);
+      }
+
+      .leyenda i--punto {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--acc);
+      }
+
+      .form-venta,
+      .form-pago {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        align-items: end;
+      }
+
+      .form-pago {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+      }
+
+      .form-venta .btn,
+      .form-pago .btn {
+        grid-column: 1 / -1;
+        justify-self: start;
+      }
+
+      .btn svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      .campo input:focus-visible {
+        outline: 2px solid var(--acc);
+        outline-offset: 1px;
+      }
+
+      @media (max-width: 900px) {
+        .resumen {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .seccion {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .resumen,
+        .form-venta,
+        .form-pago {
+          grid-template-columns: 1fr;
+        }
+
+        .cabecera-acciones {
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="fondo" aria-hidden="true"></div>
+
+    <div class="contenedor">
+      <header class="cabecera">
+        <div class="cabecera-texto">
+          <p class="eyebrow">CAFÉ HORIZONTE · PANEL DE OPERACIÓN</p>
+          <h1>Tu cafetería, <em>en vivo</em>.</h1>
+          <p class="bajada">
+            Ventas, inventario y clientes actualizados al instante. Registra una venta o inicia un
+            cobro sin salir de esta pantalla.
+          </p>
+        </div>
+        <div class="cabecera-acciones">
+          <div id="chip-datos" class="chip chip--ok chip--vivo" role="status">
+            <span class="indicador" aria-hidden="true"></span>
+            <span id="chip-datos-texto">PANEL EN VIVO</span>
+          </div>
+          <a class="enlace" href="/">VOLVER AL CHAT</a>
+        </div>
+      </header>
+
+      <main>
+        <p id="estado-global" class="estado" role="status" aria-live="polite">
+          Cargando datos del panel…
+        </p>
+
+        <section class="resumen" aria-label="Resumen del negocio">
+          <div class="tarjeta metrica">
+            <p class="etiqueta">VENTAS DE HOY</p>
+            <strong id="m-ventas-hoy">—</strong>
+            <span class="subetiqueta">Total facturado hoy</span>
+          </div>
+          <div class="tarjeta metrica">
+            <p class="etiqueta">ÓRDENES DE HOY</p>
+            <strong id="m-ordenes-hoy">—</strong>
+            <span class="subetiqueta">Ventas registradas hoy</span>
+          </div>
+          <div class="tarjeta metrica">
+            <p class="etiqueta">TOTAL GENERAL</p>
+            <strong id="m-total-general">—</strong>
+            <span class="subetiqueta">Acumulado en el histórico</span>
+          </div>
+          <div class="tarjeta metrica">
+            <p class="etiqueta">TICKET PROMEDIO</p>
+            <strong id="m-ticket">—</strong>
+            <span class="subetiqueta">Promedio por venta</span>
+          </div>
+        </section>
+
+        <section class="seccion" aria-label="Gráficas de los últimos siete días">
+          <div class="tarjeta" aria-labelledby="graf-ventas-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <div>
+                <h2 id="graf-ventas-titulo" class="etiqueta">VENTAS POR DÍA</h2>
+                <p class="subetiqueta">Ingresos de los últimos siete días.</p>
+              </div>
+            </div>
+            <svg
+              id="graf-ventas"
+              class="grafico"
+              viewBox="0 0 640 260"
+              role="img"
+            ></svg>
+          </div>
+
+          <div class="tarjeta" aria-labelledby="graf-clientes-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <div>
+                <h2 id="graf-clientes-titulo" class="etiqueta">CLIENTES POR DÍA</h2>
+                <p class="subetiqueta">Clientes únicos y clientes del chat.</p>
+              </div>
+            </div>
+            <svg
+              id="graf-clientes"
+              class="grafico"
+              viewBox="0 0 640 260"
+              role="img"
+            ></svg>
+            <p class="leyenda">
+              <span><i aria-hidden="true"></i>Clientes únicos</span>
+              <span><i class="i--punto" aria-hidden="true"></i>Clientes del chat</span>
+            </p>
+          </div>
+        </section>
+
+        <section class="seccion" aria-label="Tablas de operación">
+          <div class="tarjeta" aria-labelledby="inventario-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <div>
+                <h2 id="inventario-titulo" class="etiqueta">INVENTARIO</h2>
+                <p class="subetiqueta">Existencias frente al mínimo de cada insumo.</p>
+              </div>
+              <span id="inventario-conteo" class="conteo">—</span>
+            </div>
+            <div class="tabla-contenedor">
+              <table class="tabla">
+                <thead>
+                  <tr>
+                    <th scope="col">Insumo</th>
+                    <th scope="col" class="numero">Exist.</th>
+                    <th scope="col">Unidad</th>
+                    <th scope="col" class="numero">Mín.</th>
+                    <th scope="col">Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="cuerpo-inventario">
+                  <tr><td colspan="5" class="vacio">Cargando inventario…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="tarjeta" aria-labelledby="ventas-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <div>
+                <h2 id="ventas-titulo" class="etiqueta">ÚLTIMAS VENTAS</h2>
+                <p class="subetiqueta">Movimientos más recientes registrados.</p>
+              </div>
+              <span id="ventas-conteo" class="conteo">—</span>
+            </div>
+            <div class="tabla-contenedor">
+              <table class="tabla">
+                <thead>
+                  <tr>
+                    <th scope="col">Hora</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Productos</th>
+                    <th scope="col" class="numero">Total</th>
+                    <th scope="col">Método</th>
+                  </tr>
+                </thead>
+                <tbody id="cuerpo-ventas">
+                  <tr><td colspan="5" class="vacio">Cargando ventas…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="seccion" aria-label="Acciones rápidas">
+          <div class="tarjeta" aria-labelledby="form-venta-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <div>
+                <h2 id="form-venta-titulo" class="etiqueta">REGISTRAR VENTA</h2>
+                <p class="subetiqueta">Se agrega al historial y actualiza el panel.</p>
+              </div>
+            </div>
+            <form id="form-venta" class="form-venta">
+              <div class="campo">
+                <label for="v-producto">Producto</label>
+                <input
+                  id="v-producto"
+                  type="text"
+                  maxlength="80"
+                  placeholder="Capuchino"
+                  autocomplete="off"
+                  required
+                />
+              </div>
+              <div class="campo">
+                <label for="v-cantidad">Cantidad</label>
+                <input id="v-cantidad" type="number" min="1" step="1" value="1" required />
+              </div>
+              <div class="campo">
+                <label for="v-precio">Precio unitario</label>
+                <input
+                  id="v-precio"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="65.00"
+                  required
+                />
+              </div>
+              <button id="btn-venta" type="submit" class="btn btn--primario">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                REGISTRAR VENTA
+              </button>
+            </form>
+            <p id="estado-venta" class="estado" role="status" aria-live="polite"></p>
+          </div>
+
+          <div class="tarjeta" aria-labelledby="form-pago-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <div>
+                <h2 id="form-pago-titulo" class="etiqueta">COBRAR</h2>
+                <p class="subetiqueta">Inicia un pago y abre la confirmación.</p>
+              </div>
+            </div>
+            <form id="form-pago" class="form-pago">
+              <div class="campo">
+                <label for="p-monto">Monto a cobrar</label>
+                <input
+                  id="p-monto"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="130.00"
+                  required
+                />
+              </div>
+              <div class="campo">
+                <label for="p-concepto">Concepto</label>
+                <input
+                  id="p-concepto"
+                  type="text"
+                  maxlength="100"
+                  value="Pedido Café Horizonte"
+                  autocomplete="off"
+                />
+              </div>
+              <button id="btn-pago" type="submit" class="btn btn--primario">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="5" width="20" height="14" rx="2" />
+                  <path d="M2 10h20" />
+                </svg>
+                PAGAR
+              </button>
+            </form>
+            <p id="estado-pago" class="estado" role="status" aria-live="polite"></p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="pie">CAFÉ HORIZONTE · DATOS EN VIVO · DATOS FICTICIOS</footer>
+    </div>
+
+    <script src="/dashboard.js"></script>
+  </body>
+</html>

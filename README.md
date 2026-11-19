@@ -56,6 +56,20 @@ curl -s -X POST http://localhost:3000/api/reportes/conversacion -H "Content-Type
 En **Reportes e impresión** puedes descargar el PDF del inventario, descargar el PDF de toda la
 conversación o abrir una vista premium para imprimirla.
 
+## Dashboard y pagos
+
+- **Dashboard:** `http://localhost:3000/dashboard.html` muestra ventas e inventario en vivo,
+  clientes por día, últimas ventas y un formulario para registrar ventas. Los datos salen de
+  `GET /api/dashboard`.
+- **Pagos:** `POST /api/pagos/crear` usa Stripe si defines `STRIPE_SECRET_KEY`; si no, devuelve una
+  URL de pago de demostración en `/pago.html` (sin cargo real).
+
+## Memoria en Supabase
+
+- Define `SUPABASE_URL` y `SUPABASE_KEY` (clave publishable) en `.env`.
+- Cada mensaje del chat se guarda también en la tabla `memoria_chat` de Supabase;
+  `GET /api/memoria` devuelve los últimos registros.
+
 ## CRM en Excel
 
 El panel interno está en **http://localhost:3000/crm.html** (no aparece en la página del cliente).
