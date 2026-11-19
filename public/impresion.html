@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Café Horizonte · Conversación para imprimir</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --crema: #faf6ef;
+        --papel: #fffdf9;
+        --arena: #f1e7d8;
+        --linea: #e2d4bf;
+        --tinta: #2e2016;
+        --suave: #4d3a2b;
+        --mute: #7c6855;
+        --caramelo: #a5652f;
+        --cafe: #6d4326;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 40px 24px;
+        background: linear-gradient(120deg, #fbf7f0, #efe2cf);
+        color: var(--suave);
+        font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      }
+
+      .hoja {
+        max-width: 760px;
+        margin: 0 auto;
+        background: var(--papel);
+        border: 1px solid var(--linea);
+        border-radius: 18px;
+        padding: 44px;
+        box-shadow: 0 1px 2px rgba(62, 42, 24, 0.05), 0 20px 44px rgba(62, 42, 24, 0.08);
+      }
+
+      .barra {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        max-width: 760px;
+        margin: 0 auto 16px;
+      }
+
+      .boton {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 40px;
+        padding: 0 16px;
+        border: 1px solid var(--linea);
+        border-radius: 9px;
+        background: var(--papel);
+        color: var(--suave);
+        font: 600 10px/1 Consolas, "SF Mono", monospace;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .boton--principal {
+        background: var(--cafe);
+        border-color: var(--cafe);
+        color: #fffaf3;
+      }
+
+      .boton:hover {
+        border-color: var(--caramelo);
+      }
+
+      .marca {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        color: var(--caramelo);
+      }
+
+      .marca svg {
+        width: 34px;
+        height: 34px;
+      }
+
+      .eyebrow {
+        margin: 0;
+        font: 600 10px/1.4 Consolas, "SF Mono", monospace;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--caramelo);
+      }
+
+      h1 {
+        margin: 18px 0 6px;
+        font: 400 34px/1.12 "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+        color: var(--tinta);
+      }
+
+      .fecha {
+        margin: 0;
+        font-size: 12px;
+        color: var(--mute);
+      }
+
+      .regla {
+        height: 1px;
+        margin: 26px 0;
+        background: var(--linea);
+      }
+
+      .mensaje {
+        margin: 0 0 18px;
+        max-width: 84%;
+      }
+
+      .mensaje--user {
+        margin-left: auto;
+      }
+
+      .etiqueta {
+        display: block;
+        margin: 0 0 6px;
+        font: 600 9px/1 Consolas, "SF Mono", monospace;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--mute);
+      }
+
+      .mensaje--user .etiqueta {
+        text-align: right;
+      }
+
+      .globo {
+        padding: 13px 16px;
+        border-radius: 13px;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+
+      .mensaje--bot .globo {
+        background: var(--arena);
+        border: 1px solid var(--linea);
+        color: var(--suave);
+      }
+
+      .mensaje--user .globo {
+        background: var(--cafe);
+        color: #fffaf3;
+      }
+
+      .pie {
+        margin-top: 30px;
+        padding-top: 18px;
+        border-top: 1px solid var(--linea);
+        font: 10px/1.5 Consolas, "SF Mono", monospace;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--mute);
+      }
+
+      .vacio {
+        color: var(--mute);
+        font-size: 13px;
+      }
+
+      @media print {
+        body {
+          padding: 0;
+          background: #fff;
+        }
+
+        .barra {
+          display: none;
+        }
+
+        .hoja {
+          max-width: none;
+          margin: 0;
+          padding: 0;
+          border: 0;
+          border-radius: 0;
+          box-shadow: none;
+        }
+
+        .mensaje {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+
+        @page {
+          margin: 18mm;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="barra">
+      <button id="btn-descargar" type="button" class="boton">Descargar PDF</button>
+      <button id="btn-imprimir" type="button" class="boton boton--principal">Imprimir</button>
+    </div>
+
+    <main class="hoja">
+      <header>
+        <div class="marca">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" />
+            <path d="M17 9h2a2 2 0 0 1 0 4h-2" />
+            <path d="M8 3c0 1 1 1 1 2M12 3c0 1 1 1 1 2" />
+          </svg>
+          <p class="eyebrow">Café Horizonte · Atención al cliente</p>
+        </div>
+        <h1>Tu conversación con Café Horizonte</h1>
+        <p id="fecha" class="fecha"></p>
+      </header>
+
+      <div class="regla"></div>
+      <section id="conversacion" aria-label="Conversación"></section>
+      <footer class="pie">Generado · Datos ficticios · Café Horizonte</footer>
+    </main>
+
+    <script>
+      const contenedor = document.getElementById('conversacion');
+      let mensajes = [];
+
+      try {
+        mensajes = JSON.parse(sessionStorage.getItem('cafeConversacion') || '[]');
+      } catch (error) {
+        mensajes = [];
+      }
+
+      document.getElementById('fecha').textContent = new Date().toLocaleString('es-MX', {
+        dateStyle: 'long',
+        timeStyle: 'short'
+      });
+
+      if (!Array.isArray(mensajes) || mensajes.length === 0) {
+        const vacio = document.createElement('p');
+        vacio.className = 'vacio';
+        vacio.textContent = 'No hay conversación para mostrar.';
+        contenedor.appendChild(vacio);
+      } else {
+        mensajes.forEach((item) => {
+          const esUsuario = item.rol === 'user';
+          const bloque = document.createElement('article');
+          bloque.className = `mensaje ${esUsuario ? 'mensaje--user' : 'mensaje--bot'}`;
+
+          const etiqueta = document.createElement('span');
+          etiqueta.className = 'etiqueta';
+          etiqueta.textContent = `${esUsuario ? 'Tú' : 'Café Horizonte'} · ${item.hora || ''}`;
+
+          const globo = document.createElement('div');
+          globo.className = 'globo';
+          globo.textContent = String(item.texto || '');
+
+          bloque.append(etiqueta, globo);
+          contenedor.appendChild(bloque);
+        });
+      }
+
+      document.getElementById('btn-imprimir').addEventListener('click', () => window.print());
+
+      document.getElementById('btn-descargar').addEventListener('click', async () => {
+        const boton = document.getElementById('btn-descargar');
+        boton.disabled = true;
+        try {
+          const respuesta = await fetch('/api/reportes/conversacion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mensajes })
+          });
+          const datos = await respuesta.json();
+          if (!respuesta.ok) throw new Error(datos.error || 'No se pudo generar el PDF');
+          window.location.href = datos.url;
+        } catch (error) {
+          window.alert(error.message);
+        } finally {
+          boton.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Café Horizonte AI · Atención al cliente</title>
+    <meta name="description" content="Asistente de atención de Café Horizonte: menú, horarios y recomendaciones." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="fondo" aria-hidden="true"></div>
+    <div class="contenedor">
+      <header class="cabecera">
+        <div class="cabecera-texto">
+          <p class="eyebrow">CAFÉ HORIZONTE AI · ASISTENTE DE ATENCIÓN</p>
+          <h1>Tu café, <em>en conversación</em>.</h1>
+          <p class="bajada">
+            Pregunta por el menú, los horarios o una recomendación. El asistente responde con la
+            información de la cafetería, sin inventar datos.
+          </p>
+        </div>
+        <div class="chip chip--warn">MODO DEMOSTRACIÓN · SIN MODELO REAL</div>
+      </header>
+
+      <main class="layout">
+        <section class="tarjeta chat" aria-labelledby="chat-titulo">
+          <div class="tarjeta-cabecera">
+            <div>
+              <h2 id="chat-titulo" class="etiqueta">ASISTENTE · EN LÍNEA</h2>
+              <p class="subetiqueta">Respuestas breves, en español y sin inventar datos.</p>
+            </div>
+            <span class="indicador" aria-hidden="true"></span>
+          </div>
+
+          <div id="mensajes" class="mensajes" role="log" aria-live="polite" aria-label="Conversación">
+            <div class="burbuja burbuja--bot">
+              ¡Hola! Soy el asistente de Café Horizonte. Puedes preguntarme por el menú, los horarios o una recomendación.
+            </div>
+          </div>
+
+          <div class="sugerencias" aria-label="Preguntas sugeridas">
+            <button type="button" class="sugerencia" data-pregunta="¿Cuánto cuestan dos capuchinos?">¿Cuánto cuestan dos capuchinos?</button>
+            <button type="button" class="sugerencia" data-pregunta="¿Cuál es el horario de atención?">¿Cuál es el horario?</button>
+            <button type="button" class="sugerencia" data-pregunta="¿Venden palas?">¿Venden palas?</button>
+            <button type="button" class="sugerencia" data-pregunta="¿Qué me recomiendas desayunar?">¿Qué me recomiendas desayunar?</button>
+          </div>
+
+          <form id="form-chat" class="componer">
+            <label class="sr-only" for="entrada">Escribe tu mensaje</label>
+            <input id="entrada" type="text" maxlength="500" autocomplete="off" placeholder="Escribe tu pregunta…" required />
+            <button type="submit" class="btn btn--icono" aria-label="Enviar mensaje">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 12h15" /><path d="m13 6 6 6-6 6" />
+              </svg>
+            </button>
+          </form>
+        </section>
+
+        <aside class="panel" aria-label="Información de la cafetería">
+          <section class="tarjeta" aria-labelledby="menu-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <h2 id="menu-titulo" class="etiqueta">01 · MENÚ</h2>
+              <span class="conteo">MXN</span>
+            </div>
+            <div class="tabla-contenedor">
+              <table class="tabla">
+                <thead><tr><th scope="col">Producto</th><th scope="col" class="numero">Precio</th></tr></thead>
+                <tbody id="cuerpo-menu"></tbody>
+              </table>
+            </div>
+            <p class="tarjeta-desc" style="margin:14px 0 0">Próximamente: latte de vainilla $70, croissant de almendra $60 y pastel de limón $75.</p>
+          </section>
+
+          <section class="tarjeta" aria-labelledby="horario-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <h2 id="horario-titulo" class="etiqueta">02 · HORARIOS</h2>
+              <span class="conteo">CAFÉ HORIZONTE</span>
+            </div>
+            <div class="tabla-contenedor">
+              <table class="tabla">
+                <thead><tr><th scope="col">Días</th><th scope="col" class="numero">Horario</th></tr></thead>
+                <tbody>
+                  <tr><td>Lunes a viernes</td><td class="numero">9:00 – 20:00</td></tr>
+                  <tr><td>Sábado y domingo</td><td class="numero">10:00 – 18:00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="tarjeta" aria-labelledby="impresion-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <h2 id="impresion-titulo" class="etiqueta">03 · IMPRESIÓN</h2>
+              <span class="conteo">PDF</span>
+            </div>
+            <p class="tarjeta-desc">Guarda esta conversación o envíala a imprimir con un diseño de cafetería.</p>
+            <button id="btn-imprimir" type="button" class="btn btn--primario btn--ancho">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><path d="M6 14h12v7H6z" />
+              </svg>
+              IMPRIMIR CONVERSACIÓN
+            </button>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="pie">CAFÉ HORIZONTE · ATENCIÓN AL CLIENTE · DATOS FICTICIOS</footer>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

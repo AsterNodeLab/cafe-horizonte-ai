@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Café Horizonte AI · Asistente de atención</title>
+    <meta
+      name="description"
+      content="Asistente de atención de Café Horizonte: menú, horarios, inventario y reportes PDF."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="fondo" aria-hidden="true"></div>
+
+    <div class="contenedor">
+      <header class="cabecera">
+        <div class="cabecera-texto">
+          <p class="eyebrow">CAFÉ HORIZONTE AI · ASISTENTE DE ATENCIÓN</p>
+          <h1>Tu café, <em>en conversación</em>.</h1>
+          <p class="bajada">
+            Menú, horarios e inventario en un solo lugar. Pregunta con tus palabras: el asistente
+            responde solo con la información del negocio.
+          </p>
+        </div>
+        <div id="modo-chip" class="chip chip--neutro" role="status">COMPROBANDO MODO…</div>
+      </header>
+
+      <main class="layout">
+        <section class="tarjeta chat" aria-labelledby="chat-titulo">
+          <div class="tarjeta-cabecera">
+            <div>
+              <h2 id="chat-titulo" class="etiqueta">ASISTENTE · EN LÍNEA</h2>
+              <p class="subetiqueta">Respuestas breves, en español y sin inventar datos.</p>
+            </div>
+            <span class="indicador" aria-hidden="true"></span>
+          </div>
+
+          <div id="mensajes" class="mensajes" role="log" aria-live="polite" aria-label="Conversación">
+            <div class="burbuja burbuja--bot">
+              ¡Hola! Soy el asistente de Café Horizonte. Puedes preguntarme por el menú, los
+              horarios o el inventario.
+            </div>
+          </div>
+
+          <div class="sugerencias" aria-label="Preguntas sugeridas">
+            <button type="button" class="sugerencia" data-pregunta="¿Cuánto cuestan dos capuchinos?">
+              ¿Cuánto cuestan dos capuchinos?
+            </button>
+            <button type="button" class="sugerencia" data-pregunta="¿Cuál es el horario de atención?">
+              ¿Cuál es el horario?
+            </button>
+            <button type="button" class="sugerencia" data-pregunta="¿Tienen servicio a domicilio?">
+              ¿Tienen servicio a domicilio?
+            </button>
+            <button type="button" class="sugerencia" data-pregunta="¿Qué me recomiendas desayunar?">
+              ¿Qué me recomiendas desayunar?
+            </button>
+          </div>
+
+          <form id="form-chat" class="componer">
+            <label class="sr-only" for="entrada">Escribe tu mensaje</label>
+            <input
+              id="entrada"
+              type="text"
+              maxlength="500"
+              autocomplete="off"
+              placeholder="Escribe tu pregunta…"
+              required
+            />
+            <button type="submit" class="btn btn--icono" aria-label="Enviar mensaje">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 12h15" />
+                <path d="m13 6 6 6-6 6" />
+              </svg>
+            </button>
+          </form>
+        </section>
+
+        <aside class="panel" aria-label="Panel de operación">
+          <section class="tarjeta" aria-labelledby="inventario-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <h2 id="inventario-titulo" class="etiqueta">01 · INVENTARIO</h2>
+              <span id="inventario-conteo" class="conteo">—</span>
+            </div>
+
+            <div class="tabla-contenedor">
+              <table class="tabla">
+                <thead>
+                  <tr>
+                    <th scope="col">Insumo</th>
+                    <th scope="col" class="numero">Exist.</th>
+                    <th scope="col">Unidad</th>
+                    <th scope="col">Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="cuerpo-inventario">
+                  <tr><td colspan="4" class="vacio">Cargando inventario…</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <form id="form-movimiento" class="movimiento">
+              <div class="campo campo--ancho">
+                <label for="mov-insumo">Insumo</label>
+                <select id="mov-insumo" required></select>
+              </div>
+              <div class="campo">
+                <label for="mov-tipo">Movimiento</label>
+                <select id="mov-tipo">
+                  <option value="entrada">Entrada</option>
+                  <option value="salida">Salida</option>
+                </select>
+              </div>
+              <div class="campo campo--corto">
+                <label for="mov-cantidad">Cantidad</label>
+                <input id="mov-cantidad" type="number" min="1" step="1" value="1" required />
+              </div>
+              <button type="submit" class="btn btn--secundario">Registrar</button>
+            </form>
+            <p id="mov-estado" class="estado" role="status"></p>
+          </section>
+
+          <section class="tarjeta" aria-labelledby="reportes-titulo">
+            <div class="tarjeta-cabecera tarjeta-cabecera--compacta">
+              <h2 id="reportes-titulo" class="etiqueta">02 · REPORTES E IMPRESIÓN</h2>
+              <span class="conteo">PDF</span>
+            </div>
+            <p class="tarjeta-desc">
+              Guarda el inventario o la conversación en PDF, o envíala a imprimir con un diseño de cafetería.
+            </p>
+            <button id="btn-pdf" type="button" class="btn btn--primario btn--ancho">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                <path d="M14 3v5h5" />
+                <path d="M9 13h6M9 17h4" />
+              </svg>
+              PDF DE INVENTARIO
+            </button>
+            <div class="acciones-chat">
+              <button id="btn-pdf-chat" type="button" class="btn btn--secundario">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <path d="M7 10l5 5 5-5M12 15V3" />
+                </svg>
+                PDF DEL CHAT
+              </button>
+              <button id="btn-imprimir" type="button" class="btn btn--secundario">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                  <path d="M6 14h12v7H6z" />
+                </svg>
+                IMPRIMIR CHAT
+              </button>
+            </div>
+            <ul id="lista-reportes" class="lista">
+              <li class="vacio">Sin reportes todavía.</li>
+            </ul>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="pie">CAFÉ HORIZONTE · ATENCIÓN AL CLIENTE · DATOS FICTICIOS</footer>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
